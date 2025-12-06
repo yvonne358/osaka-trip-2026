@@ -8,7 +8,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="大阪之旅">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3125/3125848.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="app-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="app-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="app-icon.png">
+    <link rel="manifest" href="manifest.json">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -40,16 +43,17 @@
             user-select: none;
         }
 
-        /* Hero Header */
+        /* Hero Header (已修改為讀取 header-bg.jpg) */
         .hero-header {
             position: relative; width: 100%; height: 420px; 
             padding: 40px 20px 0 20px; box-sizing: border-box;
             display: flex; flex-direction: column; justify-content: flex-end;
             color: var(--text-primary);
             background-color: #ddd;
+            /* 這裡修改了：改用 header-bg.jpg */
             background-image: 
                 linear-gradient(to bottom, rgba(248, 248, 246, 0.2) 0%, rgba(248, 248, 246, 0.6) 70%, rgba(248, 248, 246, 1) 100%),
-                url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Osaka_Castle_Nishinomaru_Garden_April_2005.JPG/1280px-Osaka_Castle_Nishinomaru_Garden_April_2005.JPG');
+                url('header-bg.jpg');
             background-size: cover; background-position: center; background-repeat: no-repeat;
             margin-top: calc(-1 * env(safe-area-inset-top));
             padding-top: calc(40px + env(safe-area-inset-top));
