@@ -41,7 +41,9 @@
             padding-top: env(safe-area-inset-top);
             -webkit-tap-highlight-color: transparent;
             user-select: none;
-            overflow-x: hidden; /* 防止特效超出 */
+            overflow-x: hidden;
+            /* 修正滑動順暢度：確保在 iOS 上有原生滾動慣性 */
+            -webkit-overflow-scrolling: touch; 
         }
 
         /* Hero Header */
@@ -59,7 +61,6 @@
             padding-top: calc(40px + env(safe-area-inset-top));
         }
         
-        /* 讓天氣和時鐘使用 Class，以便在多個頁面共用 */
         .weather-widget-float {
             position: absolute; top: calc(50px + env(safe-area-inset-top)); right: 20px;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px);
@@ -108,7 +109,13 @@
         /* Itinerary Cards */
         #itinerary-list { position: relative; padding: 0 20px; }
         #itinerary-list::before { content: ''; position: absolute; left: 58px; top: 20px; bottom: 0; width: 1px; border-left: 2px dashed #DDD; z-index: 0; }
-        .timeline-card-wrapper { display: flex; align-items: flex-start; margin-bottom: 25px; position: relative; z-index: 1; touch-action: none; /* 優化拖曳體驗 */ }
+        
+        /* === 修正：移除 touch-action: none 以恢復捲動 === */
+        .timeline-card-wrapper { 
+            display: flex; align-items: flex-start; margin-bottom: 25px; position: relative; z-index: 1; 
+            /* 讓瀏覽器自己決定，這樣才能順暢滑動 */
+        }
+        
         .timeline-time { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--text-primary); width: 60px; flex-shrink: 0; text-align: right; margin-right: 20px; padding-top: 5px; }
         .card.timeline-style {
             flex: 1; background: var(--card-bg); border-radius: var(--radius-card); padding: 15px;
@@ -144,7 +151,6 @@
             height: 60px; box-sizing: content-box; 
             padding-bottom: env(safe-area-inset-bottom);
         }
-        /* 調整兩個選項的寬度 */
         .nav-item { flex: 1; text-align: center; color: #CCC; font-size: 0.7rem; cursor: pointer; } 
         .nav-item.active { color: var(--theme-brown); } 
         .nav-item i { font-size: 1.4rem; margin-bottom: 2px; display: block; }
@@ -154,10 +160,9 @@
         /* Click Effect Particle */
         .click-particle {
             position: fixed; pointer-events: none; z-index: 9999;
-            font-size: 14px; /* 約0.3-0.4cm */
-            /* 預設顏色由 JS 控制，這裡不寫死 */
+            font-size: 14px; 
             opacity: 0.8;
-            font-family: serif; /* 讓符號比較好看 */
+            font-family: serif; 
             animation: floatFade 4.5s ease-out forwards;
         }
         @keyframes floatFade {
@@ -166,13 +171,13 @@
             100% { transform: translateY(-50px) scale(0.8); opacity: 0; }
         }
 
-        /* Modal & Form Styles (Updated for Compactness) */
+        /* Modal & Form Styles */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center; }
         .modal-content { 
             background: #fff; 
-            padding: 15px 20px; /* Reduced padding */
+            padding: 15px 20px; 
             border-radius: 20px; 
-            width: 85%; max-width: 320px; /* Narrower width */
+            width: 85%; max-width: 320px; 
             max-height: 85vh; overflow-y: auto; 
             box-shadow: 0 10px 30px rgba(0,0,0,0.25); 
         }
@@ -180,7 +185,7 @@
         input, select, textarea { 
             font-family: var(--font-sans); 
             width: 100%; 
-            padding: 8px 10px; /* Compact inputs */
+            padding: 8px 10px; 
             margin: 5px 0 12px 0; 
             border: 1px solid #eee; border-radius: 8px; background: #FAFAFA; box-sizing: border-box; font-size: 1rem; 
         }
@@ -190,10 +195,7 @@
         
         /* Split Row Compact Styles */
         .split-row-compact {
-            display: flex;
-            align-items: center;
-            gap: 8px; /* Tighter gap */
-            margin-bottom: 6px;
+            display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
         }
         .split-cb { width: 20px; height: 20px; flex-shrink: 0; margin: 0; accent-color: var(--theme-brown); }
         .split-name { flex: 0 0 70px; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -390,42 +392,33 @@
             populateTimeSelects(); 
             startRealTimeClock();
             fetchExchangeRate();
-            
-            // 互動：全域點擊特效
             document.addEventListener('click', createClickEffect);
-
             renderDates(); 
             renderItinerary(); 
             renderExpenseList(); 
             renderTotalOverview();
-            
             loadCloudData();
         };
         
         // === Cute Click Effect ===
         function createClickEffect(e) {
-            // 使用白色鏤空符號 (White/Hollow Suits)
             const shapes = ['♤', '♡', '♢', '♧'];
             const shape = shapes[Math.floor(Math.random() * shapes.length)];
             const el = document.createElement('div');
             el.classList.add('click-particle');
             el.innerText = shape;
             
-            // 隨機顏色邏輯：15% 機率出現粉色驚喜，否則為主題褐灰色
+            // 隨機顏色邏輯
             const isLucky = Math.random() > 0.85; 
             const color = isLucky ? '#E09F9F' : '#8C7B70';
             el.style.color = color;
             
-            el.style.left = (e.clientX - 7) + 'px'; // -7 為了置中
+            el.style.left = (e.clientX - 7) + 'px'; 
             el.style.top = (e.clientY - 15) + 'px'; 
-            
-            // 隨機稍微旋轉
             const rot = Math.random() * 40 - 20;
             el.style.transform = `rotate(${rot}deg)`;
             
             document.body.appendChild(el);
-            
-            // 5秒後移除 (動畫設定 4.5s)
             setTimeout(() => { el.remove(); }, 5000);
         }
 
@@ -445,17 +438,13 @@
         }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
 
-        // === Clock & Weather (UPDATED to Class) ===
+        // === Clock & Weather ===
         function startRealTimeClock() {
             function update() {
                 const now = new Date(); const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
                 const h = String(now.getHours()).padStart(2,'0'); const m = String(now.getMinutes()).padStart(2,'0');
+                const year = now.getFullYear(); const month = String(now.getMonth() + 1).padStart(2, '0'); const day = String(now.getDate()).padStart(2, '0');
                 
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                
-                // 更新所有時鐘 (行程頁 + 記帳頁)
                 document.querySelectorAll('.real-time-clock').forEach(el => {
                      el.innerHTML = `${h}:${m} <span style="font-size:1rem; font-weight:400;">${days[now.getDay()]}</span>`;
                 });
@@ -467,7 +456,6 @@
         }
         
         async function updateWeather(loc) {
-            // 如果沒指定地點，就抓目前行程頁的地點，或者預設大阪
             if(!loc) {
                 if(currentDayIndex !== -1 && data.days[currentDayIndex]) {
                     loc = data.days[currentDayIndex].location;
@@ -476,12 +464,9 @@
                 }
             }
             const coords = LOC_COORDS[loc] || LOC_COORDS['Osaka'];
-            
-            // 選擇所有天氣元件
             const wIcons = document.querySelectorAll('.weather-icon'); 
             const wTemps = document.querySelectorAll('.weather-temp'); 
             const wDescs = document.querySelectorAll('.weather-desc');
-            
             wTemps.forEach(e => e.innerText = "--°C"); 
             wDescs.forEach(e => e.innerText = "Loading...");
             
@@ -524,7 +509,6 @@
             updateHero();
         }
         function updateHero() {
-            // 更新行程頁標題
             if(currentDayIndex===-1) {
                 document.getElementById('hero-day-title').innerText="行李準備清單"; document.getElementById('hero-day-loc').innerHTML=`<i class="fas fa-check-double"></i> Checklist`; 
                 document.querySelector('#page-itinerary .weather-widget').style.display = 'none';
@@ -533,7 +517,7 @@
                 document.getElementById('hero-day-title').innerText=`Day ${currentDayIndex+1}: ${d.title}`;
                 document.getElementById('hero-day-loc').innerHTML=`<i class="fas fa-map-marker-alt"></i> ${d.location}`;
                 document.querySelector('#page-itinerary .weather-widget').style.display = 'block';
-                updateWeather(d.location); // 這會同時更新行程頁和記帳頁
+                updateWeather(d.location);
             }
         }
         
@@ -544,13 +528,6 @@
                 list.style.display='block'; pack.style.display='none'; fab.style.display='flex'; list.innerHTML='';
                 let evts = data.days[currentDayIndex].events;
                 
-                // === 排序邏輯 ===
-                // 這裡我們做一個自動排序，但為了讓 Sortable.js 有效，我們假設資料已經在之前的操作被排序好了
-                // 但如果是第一次渲染，我們可以先強制按時間排一次，讓畫面整齊
-                // 為了簡單起見，我們這裡進行「顯示時的排序」，但 Sortable 拖曳後會改變原始陣列順序
-                
-                // 簡單排序：比較 time 或 depTime。如果時間一樣，就保持原樣(建立順序)
-                // 註：Sortable 拖曳後，我們會更新 data.days[].events 的順序，所以下次 render 就會照著拖曳後的順序
                 if (!data.days[currentDayIndex].hasManualOrder) {
                     evts.sort((a, b) => {
                         const tA = a.time || a.depTime || "99:99";
@@ -595,20 +572,15 @@
                 if(sortableInstance) sortableInstance.destroy();
                 sortableInstance = new Sortable(list, { 
                     animation: 150, 
-                    delay: 200, // 長按 200ms 後才能拖曳
+                    delay: 300, 
                     delayOnTouchOnly: true, 
                     ghostClass: 'sortable-ghost', 
                     handle: '.card', 
                     onEnd: function (evt) { 
-                        // 拖曳結束，更新資料陣列
                         const item = data.days[currentDayIndex].events.splice(evt.oldIndex, 1)[0]; 
                         data.days[currentDayIndex].events.splice(evt.newIndex, 0, item); 
-                        
-                        // 標記已經手動排序過，之後不再自動按時間排
                         data.days[currentDayIndex].hasManualOrder = true;
-                        
                         saveData(); 
-                        // 不重新 render，避免畫面閃爍
                     } 
                 });
             }
@@ -667,12 +639,11 @@
         }
         
         function openExpenseModal(editId=null) {
-            editingExpenseId = editId; // 設定全域 ID 標記
+            editingExpenseId = editId; 
             const payer = document.getElementById('exp-payer'); 
             payer.innerHTML=''; 
             data.members.forEach(m=>payer.innerHTML+=`<option value="${m}">${m}</option>`);
             
-            // 如果是編輯模式，先抓取舊資料
             let editData = null;
             if (editId) {
                 editData = data.expenses.find(e => e.id === editId);
@@ -681,7 +652,6 @@
                 document.getElementById('exp-modal-title').innerText = "記一筆";
             }
 
-            // 生成分帳列表
             const cont = document.getElementById('split-list-container'); 
             cont.innerHTML=''; 
             data.members.forEach(m=> {
@@ -806,7 +776,6 @@
         function toggleEventFields() { const cat = document.getElementById('evt-cat').value; document.getElementById('field-normal').style.display = (cat==='flight'||cat==='transport')?'none':'block'; document.getElementById('field-flight').style.display = (cat==='flight')?'block':'none'; document.getElementById('field-transport').style.display = (cat==='transport')?'block':'none'; }
         function openEventModal(idx=null) { editingEvent = { dayIdx: currentDayIndex, evtIdx: idx }; document.getElementById('evt-title').value=''; document.getElementById('evt-note').value=''; setTimeVal('evt-time', '09:00'); setTimeVal('evt-trans', '09:00'); setTimeVal('evt-dep', '09:00'); setTimeVal('evt-arr', '13:00'); if(idx===null) { document.getElementById('evt-cat').value='spot'; document.getElementById('evt-loc').value=''; document.getElementById('evt-trans-from').value=''; document.getElementById('evt-trans-to').value=''; } else { const e = data.days[currentDayIndex].events[idx]; document.getElementById('evt-cat').value = e.category||'spot'; document.getElementById('evt-title').value = e.title; document.getElementById('evt-note').value = e.note; if(e.category === 'flight') { document.getElementById('evt-dep-apt').value=e.depAirport; document.getElementById('evt-arr-apt').value=e.arrAirport; setTimeVal('evt-dep', e.depTime); setTimeVal('evt-arr', e.arrTime); document.getElementById('evt-flt-no').value=e.flightNo; document.getElementById('evt-plane').value=e.aircraft; } else if(e.category === 'transport') { setTimeVal('evt-trans', e.time); document.getElementById('evt-trans-from').value = e.transFrom; document.getElementById('evt-trans-to').value = e.transTo; } else { setTimeVal('evt-time', e.time); document.getElementById('evt-loc').value = e.location; } } toggleEventFields(); document.getElementById('modal-event').style.display='flex'; }
         function saveEvent() { const cat = document.getElementById('evt-cat').value; const title = document.getElementById('evt-title').value; if(!title) return alert('請輸入名稱'); let obj = { category: cat, title: title, note: document.getElementById('evt-note').value }; if(cat==='flight') { obj.depAirport=document.getElementById('evt-dep-apt').value; obj.arrAirport=document.getElementById('evt-arr-apt').value; obj.depTime=getTimeVal('evt-dep'); obj.arrTime=getTimeVal('evt-arr'); obj.flightNo=document.getElementById('evt-flt-no').value; obj.aircraft=document.getElementById('evt-plane').value; } else if(cat==='transport') { obj.time=getTimeVal('evt-trans'); obj.transFrom=document.getElementById('evt-trans-from').value; obj.transTo=document.getElementById('evt-trans-to').value; } else { obj.time=getTimeVal('evt-time'); obj.location=document.getElementById('evt-loc').value; } 
-        // 修正：新增行程時，因為有自動排序，所以我們不依賴 push 到最後，而是 push 後讓 render 去排
         if(editingEvent.evtIdx===null) data.days[currentDayIndex].events.push(obj); else data.days[currentDayIndex].events[editingEvent.evtIdx] = obj; saveData(); renderItinerary(); closeModal('modal-event'); }
         function delEvt(idx) { if(confirm('刪除?')){ data.days[currentDayIndex].events.splice(idx,1); saveData(); renderItinerary(); }}
         
