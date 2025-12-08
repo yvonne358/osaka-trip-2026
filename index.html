@@ -42,9 +42,26 @@
             -webkit-tap-highlight-color: transparent;
             user-select: none;
             overflow-x: hidden;
-            /* 修正滑動順暢度：確保在 iOS 上有原生滾動慣性 */
             -webkit-overflow-scrolling: touch; 
         }
+
+        /* === 權限控制樣式 === */
+        .admin-only { display: none !important; }
+        body.admin-mode .admin-only { display: flex !important; }
+        body.admin-mode .fab.admin-only { display: flex !important; }
+        
+        /* 鎖頭按鈕樣式 */
+        .admin-lock-btn {
+            position: absolute; 
+            top: calc(15px + env(safe-area-inset-top)); 
+            right: 15px; 
+            background: rgba(255,255,255,0.6); backdrop-filter: blur(5px);
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; z-index: 100;
+            color: #666; font-size: 0.9rem;
+        }
+        .admin-lock-btn.unlocked { color: var(--theme-brown); background: #fff; border: 2px solid var(--theme-brown); }
 
         /* Hero Header */
         .hero-header {
@@ -61,8 +78,11 @@
             padding-top: calc(40px + env(safe-area-inset-top));
         }
         
+        /* 天氣小工具 */
         .weather-widget-float {
-            position: absolute; top: calc(50px + env(safe-area-inset-top)); right: 20px;
+            position: absolute; 
+            top: calc(55px + env(safe-area-inset-top)); 
+            right: 20px;
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px);
             padding: 10px 15px; border-radius: 16px; text-align: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.6);
@@ -70,7 +90,13 @@
         .weather-icon-large { font-size: 1.8rem; color: #FFB300; margin-bottom: 2px; }
         .weather-temp-large { font-family: var(--font-serif); font-size: 1.2rem; font-weight: bold; }
 
-        .time-widget-float { position: absolute; top: calc(50px + env(safe-area-inset-top)); left: 20px; }
+        /* 時間小工具 */
+        .time-widget-float { 
+            position: absolute; 
+            top: calc(50px + env(safe-area-inset-top)); 
+            left: 20px; 
+            text-align: left;
+        }
         .time-display { font-family: var(--font-serif); font-size: 3.5rem; font-weight: 700; line-height: 1; text-shadow: 0 2px 20px rgba(255,255,255,0.9); }
         .date-display { font-family: var(--font-serif); font-size: 1.1rem; color: #444; font-weight: bold; margin-left: 4px; letter-spacing: 1px; }
 
@@ -109,13 +135,7 @@
         /* Itinerary Cards */
         #itinerary-list { position: relative; padding: 0 20px; }
         #itinerary-list::before { content: ''; position: absolute; left: 58px; top: 20px; bottom: 0; width: 1px; border-left: 2px dashed #DDD; z-index: 0; }
-        
-        /* === 修正：移除 touch-action: none 以恢復捲動 === */
-        .timeline-card-wrapper { 
-            display: flex; align-items: flex-start; margin-bottom: 25px; position: relative; z-index: 1; 
-            /* 讓瀏覽器自己決定，這樣才能順暢滑動 */
-        }
-        
+        .timeline-card-wrapper { display: flex; align-items: flex-start; margin-bottom: 25px; position: relative; z-index: 1; }
         .timeline-time { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--text-primary); width: 60px; flex-shrink: 0; text-align: right; margin-right: 20px; padding-top: 5px; }
         .card.timeline-style {
             flex: 1; background: var(--card-bg); border-radius: var(--radius-card); padding: 15px;
@@ -123,7 +143,15 @@
         }
         .event-title-large { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; margin: 0 0 5px 0; color: var(--text-primary); }
         .event-loc-row { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 8px; }
-        .event-note-box { background: #F8F8F6; padding: 10px; border-radius: 8px; color: #666; font-size: 0.9rem; margin-top: 10px;}
+        
+        /* 備註欄位樣式 */
+        .event-note-box { 
+            background: #F8F8F6; padding: 10px; border-radius: 8px; 
+            color: #666; font-size: 0.9rem; margin-top: 10px;
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        
         .card-actions-bar { display: flex; gap: 15px; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; }
         .action-link { color: var(--text-secondary); font-size: 0.9rem; text-decoration: none; display: flex; align-items: center; gap: 5px; cursor: pointer; }
         .flight-visual { background: #F2F6F9; padding: 15px; border-radius: 12px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; }
@@ -205,7 +233,14 @@
         .split-mode-btn { flex: 1; text-align: center; padding: 6px; border-radius: 6px; cursor: pointer; color: #888; font-size: 0.9rem; }
         .split-mode-btn.active { background: #fff; color: var(--theme-brown); font-weight: bold; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         
-        .time-picker-group { display: flex; align-items: center; gap: 5px; } .time-select { flex: 1; text-align: center; font-family: var(--font-serif); font-weight: bold; }
+        /* Time Picker */
+        .time-picker-group { display: flex; align-items: center; gap: 5px; } 
+        input[type="time"] {
+            appearance: none; -webkit-appearance: none;
+            background: #fff; padding: 8px; font-family: var(--font-serif); font-weight: bold; color: var(--text-primary);
+            text-align: center;
+        }
+
         .sortable-ghost { opacity: 0.5; background: #f9f9f9; transform: scale(0.98); }
         .transfer-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 0.95rem; }
         .btn-icon { width: 30px; height: 30px; border-radius: 50%; padding:0; display:flex; align-items:center; justify-content:center; border: none; cursor: pointer; background: #eee; color: #666; }
@@ -215,6 +250,10 @@
 
     <div id="page-itinerary" class="page active">
         <div class="hero-header">
+            <div class="admin-lock-btn" onclick="toggleAdminMode()">
+                <i class="fas fa-lock"></i>
+            </div>
+
             <div class="time-widget-float">
                 <div class="time-display real-time-clock">--:--</div>
                 <div class="date-display real-date-display">--</div>
@@ -240,11 +279,15 @@
             <div id="itinerary-list"></div>
             <div style="height: 60px;"></div>
         </div>
-        <div class="fab" id="fab-itinerary" onclick="openEventModal()"><i class="fas fa-plus"></i></div>
+        <div class="fab admin-only" id="fab-itinerary" onclick="openEventModal()"><i class="fas fa-plus"></i></div>
     </div>
 
     <div id="page-expense" class="page">
         <div class="hero-header">
+            <div class="admin-lock-btn" onclick="toggleAdminMode()">
+                <i class="fas fa-lock"></i>
+            </div>
+
             <div class="time-widget-float">
                 <div class="time-display real-time-clock">--:--</div>
                 <div class="date-display real-date-display">--</div>
@@ -260,7 +303,7 @@
 
         <div class="content-area-bg" style="padding:20px;">
             <div class="balance-card">
-                <div style="position: absolute; top:15px; right:15px; cursor:pointer; color:var(--text-secondary);" onclick="openMembersModal()"><i class="fas fa-cog"></i> 成員</div>
+                <div class="admin-only" style="position: absolute; top:15px; right:15px; cursor:pointer; color:var(--text-secondary);" onclick="openMembersModal()"><i class="fas fa-cog"></i> 成員</div>
                 <h3>目前累計支出</h3>
                 <div id="total-expense-display" style="font-size:0.9rem; line-height:1.5; color:#555;"></div>
                 <button class="btn btn-small btn-outline" style="margin-top:10px;" onclick="renderSettlement()">查看結算</button>
@@ -268,7 +311,7 @@
             <div id="expense-list"></div>
             <div style="height: 60px;"></div>
         </div>
-        <div class="fab" onclick="openExpenseModal()"><i class="fas fa-yen-sign"></i></div>
+        <div class="fab admin-only" onclick="openExpenseModal()"><i class="fas fa-yen-sign"></i></div>
     </div>
 
     <div class="bottom-nav">
@@ -281,10 +324,31 @@
             <h3 id="evt-modal-title" class="serif-font" style="margin-top:0">行程詳細</h3>
             <label>分類</label><select id="evt-cat" onchange="toggleEventFields()"><option value="spot">⛩️ 景點</option><option value="transport">🚅 交通</option><option value="flight">✈️ 航班</option><option value="food">🍜 美食</option><option value="shop">🛍️ 購物</option><option value="other">📝 其他</option></select>
             <label>行程名稱</label><input type="text" id="evt-title" placeholder="例如：參觀清水寺">
-            <div id="field-normal"><label>時間</label><div class="time-picker-group"><select id="evt-time-h" class="time-select"></select>:<select id="evt-time-m" class="time-select"></select></div><label>地點</label><input type="text" id="evt-loc"></div>
-            <div id="field-transport" style="display:none;background:#F0F4F4;padding:10px;border-radius:8px;margin-bottom:15px;"><label>時間</label><div class="time-picker-group"><select id="evt-trans-h" class="time-select"></select>:<select id="evt-trans-m" class="time-select"></select></div><label>出發地</label><input type="text" id="evt-trans-from"><label>目的地</label><input type="text" id="evt-trans-to"></div>
-            <div id="field-flight" style="display:none;background:#F2F6F9;padding:10px;border-radius:8px;margin-bottom:15px;"><div style="display:flex;gap:10px"><input id="evt-dep-apt" placeholder="出發"><input id="evt-arr-apt" placeholder="抵達"></div><div style="display:flex;gap:10px"><div style="flex:1">起飞<div class="time-picker-group"><select id="evt-dep-h" class="time-select"></select>:<select id="evt-dep-m" class="time-select"></select></div></div><div style="flex:1">抵達<div class="time-picker-group"><select id="evt-arr-h" class="time-select"></select>:<select id="evt-arr-m" class="time-select"></select></div></div></div><div style="display:flex;gap:10px"><input id="evt-flt-no" placeholder="航班號"><input id="evt-plane" placeholder="機型"></div></div>
-            <label>備註</label><input type="text" id="evt-note">
+            
+            <div id="field-normal">
+                <label>時間</label>
+                <div class="time-picker-group"><input type="time" id="evt-time"></div>
+                <label>地點</label><input type="text" id="evt-loc">
+            </div>
+            
+            <div id="field-transport" style="display:none;background:#F0F4F4;padding:10px;border-radius:8px;margin-bottom:15px;">
+                <label>時間</label>
+                <div class="time-picker-group"><input type="time" id="evt-trans"></div>
+                <label>出發地</label><input type="text" id="evt-trans-from"><label>目的地</label><input type="text" id="evt-trans-to">
+            </div>
+            
+            <div id="field-flight" style="display:none;background:#F2F6F9;padding:10px;border-radius:8px;margin-bottom:15px;">
+                <div style="display:flex;gap:10px"><input id="evt-dep-apt" placeholder="出發"><input id="evt-arr-apt" placeholder="抵達"></div>
+                <div style="display:flex;gap:10px">
+                    <div style="flex:1">起飞<div class="time-picker-group"><input type="time" id="evt-dep"></div></div>
+                    <div style="flex:1">抵達<div class="time-picker-group"><input type="time" id="evt-arr"></div></div>
+                </div>
+                <div style="display:flex;gap:10px"><input id="evt-flt-no" placeholder="航班號"><input id="evt-plane" placeholder="機型"></div>
+            </div>
+            
+            <label>備註</label>
+            <textarea id="evt-note" rows="3" placeholder="備註..."></textarea>
+            
             <button class="btn" onclick="saveEvent()">儲存</button><button class="btn btn-outline" style="margin-top:5px" onclick="closeModal('modal-event')">取消</button>
         </div>
     </div>
@@ -313,6 +377,10 @@
 
     <script>
         // === Global Variables ===
+        // 設定管理員密碼
+        const ADMIN_PASSWORD = "8888";
+        let isAdminMode = false;
+
         let markers=[]; let editingEvent={dayIdx:null,evtIdx:null}; let editingExpenseId=null; let splitMode='avg'; let sortableInstance=null, expSortable=null;
         const API_URL = "https://script.google.com/macros/s/AKfycbyab4hJT4744AuWqaTwltjZjidaDE5pR1zwueEXStoi7Z3MXtzC_yvoL2Izrwjhqw8D/exec";
         let currentRate = 0.22; // Default fallback
@@ -343,6 +411,35 @@
         const LOC_COORDS = { 'Kyoto': { lat: 35.0116, lon: 135.7681 }, 'Osaka': { lat: 34.6937, lon: 135.5023 } };
 
         let currentDayIndex = 0; 
+
+        // === Admin Toggle Logic (Modified to sync all buttons) ===
+        function toggleAdminMode() {
+            if (isAdminMode) {
+                // 鎖定
+                isAdminMode = false;
+                document.body.classList.remove('admin-mode');
+                // 同步更新所有鎖頭按鈕
+                document.querySelectorAll('.admin-lock-btn').forEach(btn => {
+                    btn.classList.remove('unlocked');
+                    btn.querySelector('i').className = 'fas fa-lock';
+                });
+                alert("已鎖定編輯權限");
+            } else {
+                // 解鎖
+                const pwd = prompt("請輸入管理員密碼以解鎖編輯功能：");
+                if (pwd === ADMIN_PASSWORD) {
+                    isAdminMode = true;
+                    document.body.classList.add('admin-mode');
+                    // 同步更新所有鎖頭按鈕
+                    document.querySelectorAll('.admin-lock-btn').forEach(btn => {
+                        btn.classList.add('unlocked');
+                        btn.querySelector('i').className = 'fas fa-unlock';
+                    });
+                } else if (pwd !== null) {
+                    alert("密碼錯誤");
+                }
+            }
+        }
 
         // === Cloud Sync ===
         async function loadCloudData() {
@@ -389,7 +486,7 @@
         }
 
         window.onload = function() {
-            populateTimeSelects(); 
+            // populateTimeSelects() 已移除，改用原生時間輸入
             startRealTimeClock();
             fetchExchangeRate();
             document.addEventListener('click', createClickEffect);
@@ -402,13 +499,14 @@
         
         // === Cute Click Effect ===
         function createClickEffect(e) {
+            if(e.target.closest('.admin-lock-btn')) return;
+
             const shapes = ['♤', '♡', '♢', '♧'];
             const shape = shapes[Math.floor(Math.random() * shapes.length)];
             const el = document.createElement('div');
             el.classList.add('click-particle');
             el.innerText = shape;
             
-            // 隨機顏色邏輯
             const isLucky = Math.random() > 0.85; 
             const color = isLucky ? '#E09F9F' : '#8C7B70';
             el.style.color = color;
@@ -434,7 +532,7 @@
         function switchPage(pid, el) { 
             document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+pid).classList.add('active'); 
             document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); el.classList.add('active'); 
-            if(pid==='expense') updateHero(); // 切換到記帳頁也要更新天氣
+            if(pid==='expense') updateHero(); 
         }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
 
@@ -484,14 +582,9 @@
             } catch(e) { wDescs.forEach(e => e.innerText = "Offline"); }
         }
 
-        // === Inputs ===
-        function populateTimeSelects() {
-            const hOpts = Array.from({length:24}, (_,i)=>`<option value="${String(i).padStart(2,'0')}">${String(i).padStart(2,'0')}</option>`).join('');
-            const mOpts = ['00','10','20','30','40','50'].map(m=>`<option value="${m}">${m}</option>`).join('');
-            ['evt-time','evt-trans','evt-dep','evt-arr'].forEach(id => { const h=document.getElementById(id+'-h'), m=document.getElementById(id+'-m'); if(h&&m){h.innerHTML=hOpts; m.innerHTML=mOpts;} });
-        }
-        function getTimeVal(p) { return document.getElementById(p+'-h').value + ':' + document.getElementById(p+'-m').value; }
-        function setTimeVal(p, v) { if(!v) v="09:00"; const s=v.split(':'); document.getElementById(p+'-h').value=s[0]; document.getElementById(p+'-m').value=s[1]; }
+        // === Inputs Logic (Simplified) ===
+        function getTimeVal(p) { return document.getElementById(p).value; }
+        function setTimeVal(p, v) { if(!v) v="09:00"; document.getElementById(p).value = v; }
 
         // === Itinerary ===
         function renderDates() {
@@ -528,6 +621,7 @@
                 list.style.display='block'; pack.style.display='none'; fab.style.display='flex'; list.innerHTML='';
                 let evts = data.days[currentDayIndex].events;
                 
+                // === 排序邏輯：若未手動調整過，預設按時間排序 ===
                 if (!data.days[currentDayIndex].hasManualOrder) {
                     evts.sort((a, b) => {
                         const tA = a.time || a.depTime || "99:99";
@@ -552,6 +646,8 @@
                     } else {
                         mapUrl=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent('日本 ' + evt.location)}`; loc=evt.location;
                     }
+                    
+                    // 修正重複地圖連結：統一邏輯
                     list.innerHTML += `
                     <div class="timeline-card-wrapper" data-idx="${idx}">
                         <div class="timeline-time">${timeD}</div>
@@ -560,10 +656,11 @@
                             ${contentHtml}
                             ${(evt.category!=='transport'&&evt.category!=='flight') ? `<div class="event-loc-row"><i class="fas fa-map-marker-alt"></i> ${loc}</div>` : ''}
                             ${evt.note ? `<div class="event-note-box">${evt.note}</div>` : ''}
+                            
                             <div class="card-actions-bar">
                                 <a href="${mapUrl}" target="_blank" class="action-link"><i class="far fa-map"></i> 地圖</a>
-                                <div class="action-link" onclick="openEventModal(${idx})"><i class="far fa-edit"></i> 編輯</div>
-                                <div class="action-link" style="color:#ffcccb;" onclick="delEvt(${idx})"><i class="far fa-trash-alt"></i> 刪除</div>
+                                <div class="action-link admin-only" onclick="openEventModal(${idx})"><i class="far fa-edit"></i> 編輯</div>
+                                <div class="action-link admin-only" style="color:#ffcccb;" onclick="delEvt(${idx})"><i class="far fa-trash-alt"></i> 刪除</div>
                             </div>
                         </div>
                     </div>`;
@@ -576,9 +673,15 @@
                     delayOnTouchOnly: true, 
                     ghostClass: 'sortable-ghost', 
                     handle: '.card', 
+                    filter: ".ignore-elements", 
+                    // 僅允許在管理員模式下拖曳，以免誤觸
+                    onStart: function(evt) { if(!isAdminMode) return false; },
+                    onMove: function(evt) { return isAdminMode; },
                     onEnd: function (evt) { 
+                        if (!isAdminMode) return;
                         const item = data.days[currentDayIndex].events.splice(evt.oldIndex, 1)[0]; 
                         data.days[currentDayIndex].events.splice(evt.newIndex, 0, item); 
+                        // 拖曳後，標記該天為手動排序，之後不再自動按時間排
                         data.days[currentDayIndex].hasManualOrder = true;
                         saveData(); 
                     } 
@@ -627,7 +730,7 @@
                     </div>
                     <div style="text-align:right">
                         <div class="money" style="font-size:1.2rem; color:var(--theme-brown)">${e.currency} ${e.amount.toLocaleString()}</div>
-                        <div style="margin-top:5px; display:flex; gap:10px; justify-content:flex-end;">
+                        <div class="admin-only" style="margin-top:5px; gap:10px; justify-content:flex-end;">
                              <i class="far fa-edit" style="color:#aaa; cursor:pointer;" onclick="openExpenseModal('${e.id}')"></i>
                              <i class="far fa-trash-alt" style="color:#ffcccb; cursor:pointer;" onclick="deleteExpense('${e.id}')"></i>
                         </div>
